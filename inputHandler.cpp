@@ -32,3 +32,20 @@ int CreateSport(){
         return 0;
     }
 }
+int CreateDivision(){
+
+}
+int CreateCompetitior(){
+    string name;
+    string surname;
+    int age;
+    char sex;
+    string club;
+    // Add score array
+
+}
+int CreateScore(){
+    string scoreStr;
+    // Add sport
+    // Add divistion
+}
