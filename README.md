@@ -7,3 +7,4 @@
  - Import handler (Import all objects from the CVS file)
  - Output handler (lists all objects from the CVS file)
  - Fix a nice tui for the inputs and outputs
+ - Add a Cmake file for compiling
