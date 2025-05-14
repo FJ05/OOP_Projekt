@@ -8,7 +8,7 @@ int CreateSport(){
     string units;
     char boolian;
 
-    cout << "Create a Sport\nEnter Sport Name: ";
+    cout << "--- Create a Sport ---\nEnter Sport Name: ";
     cin >> name;
 
     cout << "\nHow many people does the arena host?: ";
@@ -32,9 +32,42 @@ int CreateSport(){
         return 0;
     }
 }
-int CreateDivision(){
 
+int CreateDivision(){
+    int ageFrom;
+    int ageTo;
+    string name;
+    string desc;
+    string optDec;
+
+    cout << "--- Creating Division ---" << endl;
+    cout << "Enter Age from: ";
+    cin >> ageFrom;
+
+    cout << "Enter Age to: ";
+    cin >> ageTo;
+
+    cout << "Enter Division name: ";
+    cin >> name;
+
+    cout << "Enter Division Description: ";
+    cin >> desc;
+
+    char boolian;
+    cout << "Do you want to add an extra description? (y/n)";
+    cin boolian;
+
+    if(tolower(boolian) == 'y'){
+	cout << "Enter Extra Division Description: ";
+	cin >> optDec;
+    }
+    else{
+	optDec == "";
+    }
+
+    return 0;
 }
+
 int CreateCompetitior(){
     string name;
     string surname;
@@ -44,6 +77,7 @@ int CreateCompetitior(){
     // Add score array
 
 }
+
 int CreateScore(){
     string scoreStr;
     // Add sport
