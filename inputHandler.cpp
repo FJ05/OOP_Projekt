@@ -34,6 +34,7 @@ int CreateSport(){
 }
 
 int CreateDivision(){
+    char boolian;
     int ageFrom;
     int ageTo;
     string name;
@@ -53,9 +54,8 @@ int CreateDivision(){
     cout << "Enter Division Description: ";
     cin >> desc;
 
-    char boolian;
     cout << "Do you want to add an extra description? (y/n)";
-    cin boolian;
+    cin >> boolian;
 
     if(tolower(boolian) == 'y'){
 	cout << "Enter Extra Division Description: ";
