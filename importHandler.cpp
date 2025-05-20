@@ -39,16 +39,19 @@ public:
 
             cout << "test 3" << endl;
 
+            //sparar name, surname, age, sex, club
             c.name = v[0];
             c.surname = v[1];
             c.age = stoi(v[2]);
             c.sex = v[3][0];
             c.club = v[4];
 
+            //sparar alla scores i competitor object
             for(int i = 5; i<v.size(); i++)
             {
                 s.scoreStr = v[i];
-                //cout <<"score:" << i-4 << ": "<< v[i] << endl;
+                cout <<"score:" << i-4 << ": "<< v[i] << endl;
+
             }
 
             competitors->push_back(c);
