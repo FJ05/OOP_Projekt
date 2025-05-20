@@ -45,24 +45,24 @@ int CreateDivision(){
     cout << "Enter Age from: ";
     cin >> ageFrom;
 
-    cout << "Enter Age to: ";
+    cout << "\nEnter Age to: ";
     cin >> ageTo;
 
-    cout << "Enter Division name: ";
+    cout << "\nEnter Division name: ";
     cin >> name;
 
-    cout << "Enter Division Description: ";
+    cout << "\nEnter Division Description: ";
     cin >> desc;
 
-    cout << "Do you want to add an extra description? (y/n)";
+    cout << "\nDo you want to add an extra description? (y/n)";
     cin >> boolian;
 
     if(tolower(boolian) == 'y'){
-	cout << "Enter Extra Division Description: ";
-	cin >> optDec;
+        cout << "\nEnter Extra Division Description: ";
+        cin >> optDec;
     }
     else{
-	optDec == "";
+	    optDec == "";
     }
 
     return 0;
@@ -76,10 +76,37 @@ int CreateCompetitior(){
     string club;
     // Add score array
 
+    cout << "\n--- Creating Competitor ---" << endl;
+    cout << "Enter name : ";
+    cin >> name;
+
+    cout << "\nEnter surname: ";
+    cin >> surname;
+
+    cout << "\nEnter age: ";
+    cin >> age;
+
+    cout << "\nEnter sex: ";
+    cin >> sex;
+
+    cout << "\nEnter club name: ";
+    cin >> club;
+
+    // Add score array
 }
 
 int CreateScore(){
     string scoreStr;
     // Add sport
     // Add divistion
+
+    cout << "\n--- Create Score ---";
+    cout << "\n Enter score: ";
+    cin >> scoreStr;
 }
+
+/*
+TODO
+
+Add error handlig and try statements with the inputs
+*/
