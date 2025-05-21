@@ -14,6 +14,8 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
 
     // --- 1) Read sportIndex.csv → build sports + divisions + eventNames in export order ---
     ifstream dbSportFile("DB/sportIndex.csv");
+    
+    //om man inte kan öppna sportIndex
     if (!dbSportFile.is_open()) {
         cerr << "Failed to open DB/sportIndex.csv\n";
         return;
@@ -22,38 +24,47 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
     vector<string> eventNames;
     set<string> seenEvents;
     string lineSport;
-    while (getline(dbSportFile, lineSport)) {
+
+    while (getline(dbSportFile, lineSport)) 
+    {
         stringstream ss(lineSport);
         string sportName;
         int arenaSize;
         string unit;
 
-        // read the first three fields
-        getline(ss, sportName, ',');
-        ss >> arenaSize;      // arenaSize
-        ss.ignore(1);         // comma
+        getline(ss, sportName, ','); 
+        ss >> arenaSize;      // arenaSize i int
+        ss.ignore(1);         // skippar comma
         getline(ss, unit, ',');
 
-        // find or create Sport
+        
         Sport* sportPtr = nullptr;
-        for (auto& s : *sports) {
-            if (s.name == sportName && s.unit == unit) {
+        //kollar igenom om det redan finns en sport med det namnet
+        //problem: kan finnas flera sport och unit
+        for (auto& s : *sports)
+        {
+            if (s.name == sportName && s.unit == unit) 
+            {
                 sportPtr = &s;
                 break;
             }
         }
-        if (!sportPtr) {
+
+        //om sportPtr är tom är
+        if (!sportPtr) 
+        {
             sports->emplace_back();
             sportPtr = &sports->back();
-            sportPtr->name       = sportName;
-            sportPtr->arenaSize  = arenaSize;
-            sportPtr->unit       = unit;
+            sportPtr->name = sportName;
+            sportPtr->arenaSize = arenaSize;
+            sportPtr->unit = unit;
         }
 
-        // parse all division‐blocks in this line
+        // split up all values into different divisions
         while (true) {
             Division d;
-            if (!(ss >> d.ageFrom)) break;  // no more blocks
+            //if there is no more values
+            if (!(ss >> d.ageFrom)) break;  
             ss.ignore(1);
             ss >> d.ageTo;
             ss.ignore(1);
@@ -120,11 +131,11 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
 
         // build competitor
         Competitor c;
-        c.name    = fields[0];
+        c.name = fields[0];
         c.surname = fields[1];
-        c.age     = stoi(fields[2]);
-        c.sex     = fields[3].empty() ? 'U' : fields[3][0];
-        c.club    = fields[4];
+        c.age = stoi(fields[2]);
+        c.sex = fields[3].empty() ? 'U' : fields[3][0];
+        c.club = fields[4];
 
         // for each event column
         for (size_t i = 5; i < fields.size() && i-5 < colMaps.size(); ++i) {

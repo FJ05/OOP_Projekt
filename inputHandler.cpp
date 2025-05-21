@@ -105,7 +105,6 @@ int CreateCompetitior(){
 
     outFile << name << "," << surname << "," << age << "," << sex << "," << club; // ADD SCORE
 
-
     outFile << "\n";
     outFile.close();
 ///////////////////////////////////////////////////////////////////
