@@ -12,12 +12,10 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
 {
     cout << "start importvalues" << endl;
 
-    // --- 1) Read sportIndex.csv → build sports + divisions + eventNames in export order ---
     ifstream dbSportFile("DB/sportIndex.csv");
     
-    //om man inte kan öppna sportIndex
     if (!dbSportFile.is_open()) {
-        cerr << "Failed to open DB/sportIndex.csv\n";
+        cerr << "Cant open DB/sportIndex.csv\n";
         return;
     }
 
@@ -31,18 +29,25 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
         string sportName;
         int arenaSize;
         string unit;
+        
+        string temp;
 
+        //sparar sportNamn, arenaSize och unit i variabler
         getline(ss, sportName, ','); 
-        ss >> arenaSize;      // arenaSize i int
-        ss.ignore(1);         // skippar comma
+        getline(ss,temp, ',');
+        //lägg till en try catch för att checka temp inte är null
+        arenaSize = stoi(temp);
         getline(ss, unit, ',');
-
         
         Sport* sportPtr = nullptr;
+        
         //kollar igenom om det redan finns en sport med det namnet
-        //problem: kan finnas flera sport och unit
-        for (auto& s : *sports)
+        //om den finns får sportPtr pointer värdet av den existerande sporten
+        
+        // PROBLEM: kan finnas flera objekt med samma sport och unit, ksk fixa sportNamnet och desc innan o jämföra
+        for (int i = 0; i < sports->size(); i++)
         {
+            Sport &s = (*sports)[i];
             if (s.name == sportName && s.unit == unit) 
             {
                 sportPtr = &s;
@@ -50,7 +55,7 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
             }
         }
 
-        //om sportPtr är tom är
+        //om sportPtr är tom ska vi skapa sporten
         if (!sportPtr) 
         {
             sports->emplace_back();
@@ -64,23 +69,31 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
         while (true) {
             Division d;
             //if there is no more values
-            if (!(ss >> d.ageFrom)) break;  
+            if (!(ss >> d.ageFrom)) 
+            {
+                break;
+            }
             ss.ignore(1);
             ss >> d.ageTo;
             ss.ignore(1);
             getline(ss, d.desc, ',');
             getline(ss, d.name, ',');
 
-            // add division
+            // add division in current sport
             sportPtr->divisionArr.push_back(d);
 
             // record eventName = "desc name"
-            string ev = d.desc + (d.name.empty() ? "" : " " + d.name);
-            if (seenEvents.insert(ev).second) {
+            string ev = d.desc + " " + d.name;
+            
+            if (seenEvents.insert(ev).second) 
+            {
                 eventNames.push_back(ev);
             }
 
-            if (ss.peek() == EOF) break;
+            if (ss.peek() == EOF) 
+            {
+                break;
+            }
         }
     }
     dbSportFile.close();
@@ -111,7 +124,6 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
         colMaps.push_back({sp,dv});
     }
 
-    // --- 3) Read compIndex.csv (no header!) ---
     ifstream dbFile("DB/compIndex.csv");
     if (!dbFile.is_open()) {
         cerr << "Failed to open DB/compIndex.csv\n";
