@@ -37,7 +37,7 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
         // find or create Sport
         Sport* sportPtr = nullptr;
         for (auto& s : *sports) {
-            if (s.name == sportName) {
+            if (s.name == sportName && s.unit == unit) {
                 sportPtr = &s;
                 break;
             }
