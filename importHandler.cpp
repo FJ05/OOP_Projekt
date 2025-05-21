@@ -1,66 +1,91 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
-#include <vector>
-#include "assets.h"
+#include "importHandler.h"
 
 using namespace std;
 
-class ImportSystem 
+void ImportSystem::ImportValues(vector<Competitor>* competitors,
+                                vector<Score>* scores,
+                                vector<Sport>* sports)
 {
-public:
-    void ImportValues(vector<Competitor> *competitors, vector<Score> *scores)
-    {
-        cout << "start importvalues" << endl;
-        ifstream dbFile;
-        string line = "";
-        dbFile.open("DB/compIndex.csv");
-        getline(dbFile, line);
-        int lineNumber=0;
-        
-        Score s;
+    cout << "start importvalues" << endl;
 
-        while(getline(dbFile, line))
-        {
-            stringstream ss(line);
-            string substr;
-            vector<string> v;
-            Competitor c;
+    ifstream dbFile("DB/compIndex.csv");
+    ifstream dbSportFile("DB/sportIndex.csv");
 
-            cout << "test 1" << endl;
+    string line, lineSport;
 
-            while (getline(ss,substr, ',')) //splits up the line into substr and stores values in v
-            {
-                v.push_back(substr); 
-                cout << substr << endl;
+    // LÄS IN SPORTDATA
+    getline(dbSportFile, lineSport); // Skippa header
+    while (getline(dbSportFile, lineSport)) {
+        stringstream ss(lineSport);
+        string sportName, divName, desc, optDesc, unit;
+
+        getline(ss, sportName, ',');
+        getline(ss, divName, ',');
+        getline(ss, desc, ',');
+        getline(ss, optDesc, ',');
+        getline(ss, unit, ',');
+
+        Sport* sportPtr = nullptr;
+        for (auto& s : *sports) {
+            if (s.name == sportName) {
+                sportPtr = &s;
+                break;
             }
-            cout << "test 2" << endl;
-
-            cout << "test 3" << endl;
-
-            //sparar name, surname, age, sex, club
-            c.name = v[0];
-            c.surname = v[1];
-            c.age = stoi(v[2]);
-            c.sex = v[3][0];
-            c.club = v[4];
-
-            //sparar alla scores i competitor object
-            for(int i = 5; i<v.size(); i++)
-            {
-                s.scoreStr = v[i];
-                cout <<"score:" << i-4 << ": "<< v[i] << endl;
-
-            }
-
-            competitors->push_back(c);
-
-            v.clear();
-            cout << "name:" << c.name << endl;
-            cout << "Full line:" << line << endl;
-            lineNumber++;
         }
-        dbFile.close();
+
+        if (!sportPtr) {
+            Sport newSport;
+            newSport.name = sportName;
+            newSport.unit = unit;
+            sports->push_back(newSport);
+            sportPtr = &sports->back();
+        }
+
+        Division d(0, 0, divName, desc, optDesc);
+        sportPtr->divisionArr.push_back(d);
     }
-};
+
+    // LÄS IN TÄVLANDE
+    getline(dbFile, line); // Skippa header
+    while (getline(dbFile, line)) {
+        stringstream ss(line);
+        string substr;
+        vector<string> v;
+        Competitor c;
+
+        while (getline(ss, substr, ',')) {
+            v.push_back(substr);
+        }
+
+        c.name = v[0];
+        c.surname = v[1];
+        c.age = stoi(v[2]);
+        c.sex = v[3][0];
+        c.club = v[4];
+
+        for (size_t i = 5; i < v.size(); i++) {
+            Score score;
+            score.scoreStr = v[i];
+
+            if (i - 5 < sports->size()) {
+                score.sport = &(*sports)[i - 5];
+                if (!score.sport->divisionArr.empty()) {
+                    score.division = score.sport->divisionArr[0];
+                }
+
+                score.sport->competitorArr.push_back(c);
+            }
+
+            c.scoreArr.push_back(score);
+            scores->push_back(score);
+        }
+
+        competitors->push_back(c);
+    }
+
+    dbFile.close();
+    dbSportFile.close();
+}

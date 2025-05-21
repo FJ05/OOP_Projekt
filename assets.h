@@ -14,7 +14,6 @@ public:
     std::string optDesc{};
 
     Division() = default;
-    // Const for Division
     Division(int from, int to, std::string n, std::string d, std::string opt = "");
 };
 
