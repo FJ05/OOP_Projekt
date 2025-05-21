@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 #include "importHandler.h"
 
 using namespace std;
@@ -20,17 +21,24 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
     getline(dbSportFile, lineSport); // Skippa header
     while (getline(dbSportFile, lineSport)) {
         stringstream ss(lineSport);
-        string sportName, divName, desc, optDesc, unit;
+        string cell;
+        vector<string> tokens;
 
-        getline(ss, sportName, ',');
-        getline(ss, divName, ',');
-        getline(ss, desc, ',');
-        getline(ss, optDesc, ',');
-        getline(ss, unit, ',');
+        while (getline(ss, cell, ',')) {
+            tokens.push_back(cell);
+        }
+
+        if (tokens.size() < 5) continue;
+
+        string sportName = tokens[0];
+        string arenaSizeStr = tokens[1];
+        string unit = tokens[2];
+        int ageFrom = stoi(tokens[3]);
+        int ageTo = stoi(tokens[4]);
 
         Sport* sportPtr = nullptr;
         for (auto& s : *sports) {
-            if (s.name == sportName) {
+            if (s.name == sportName && s.unit == unit) {
                 sportPtr = &s;
                 break;
             }
@@ -40,12 +48,19 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
             Sport newSport;
             newSport.name = sportName;
             newSport.unit = unit;
+            newSport.arenaSize = stoi(arenaSizeStr);
             sports->push_back(newSport);
             sportPtr = &sports->back();
         }
 
-        Division d(0, 0, divName, desc, optDesc);
-        sportPtr->divisionArr.push_back(d);
+        // Divisioner börjar från index 5, varje 3 värde
+        for (size_t i = 5; i + 2 < tokens.size(); i += 3) {
+            string name = tokens[i];
+            string desc = tokens[i + 1];
+            string optDesc = tokens[i + 2];
+            Division d(ageFrom, ageTo, name, desc, optDesc);
+            sportPtr->divisionArr.push_back(d);
+        }
     }
 
     // LÄS IN TÄVLANDE

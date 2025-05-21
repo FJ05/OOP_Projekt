@@ -1,6 +1,6 @@
 #include "assets.h"
 
-//constructor definition
+// Constructor definition
 Division::Division(int from, int to, std::string n, std::string d, std::string opt)
     : ageFrom(from),
       ageTo(to),
