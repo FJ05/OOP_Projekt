@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <cctype>
 using namespace std;
 
@@ -93,6 +94,23 @@ int CreateCompetitior(){
     cin >> club;
 
     // Add score array
+
+
+    ///// NYTT FRÅN DAVID /////////////////////////////////////////
+    ofstream outFile("DB/compIndex.csv", ios::app); // öppna i "append"-läge
+    if (!outFile) {
+        cerr << "Kunde inte öppna filen.\n";
+        return 1;
+    }
+
+    outFile << name << "," << surname << "," << age << "," << sex << "," << club; // ADD SCORE
+
+
+    outFile << "\n";
+    outFile.close();
+///////////////////////////////////////////////////////////////////
+    
+
 }
 
 int CreateScore(){
