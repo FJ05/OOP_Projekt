@@ -1,7 +1,9 @@
+#include <fstream> 
 #include <iostream>
 #include <vector>
 #include "assets.h"
 #include "importHandler.h"
+#include "schedulecalculator.h"
 
 using namespace std;
 
@@ -24,6 +26,34 @@ int main()
             cout << "    - " << d.name << " (" << d.desc << "), Optional: " << d.optDesc << endl;
         }
     }
+
+
+ 
+    // Efter import av data
+    ScheduleCalculator scheduler;
+    auto schedule = scheduler.GenerateSchedule(sports);
+
+    // Skriv ut schemat
+    std::ofstream scheduleFile("schedule.csv");
+    scheduleFile << "Station;Start;Slut;Gren;Division;Deltagare\n";
+    for (const auto& event : schedule) {
+        scheduleFile << event.station << ";"
+                    << event.startTime << ";"
+                    << event.endTime << ";"
+                    << event.sport.name << ";"
+                    << event.division.desc << " "
+                    << event.division.name << ";";
+        
+        for (size_t i = 0; i < event.competitors.size(); ++i) {
+            if (i > 0) scheduleFile << ",";
+            scheduleFile << event.competitors[i].name << " "
+                        << event.competitors[i].surname;
+        }
+        scheduleFile << "\n";
+    }
+    scheduleFile.close();
+
+
 
     return 0;
 }
