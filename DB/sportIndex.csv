@@ -1,1 +1,11 @@
-name, arenaSize, unit, ageFrom1, AgeTo1, Name1, Desc1, Optdesc1, ageFrom2, AgeTo2, Name2, Desc2, Optdesc2
+running,1000,s,0,8,sprint,60m,0-8,9,10,sprint,60m,9-10,11,12,sprint,60m,11-12,13,14,sprint,60m,13-14,15,16,sprint,60m,15-16,17,18,sprint,60m,17-18
+running,1000,s,0,8,sprint,200m,0-8,9,10,sprint,200m,9-10,11,12,sprint,200m,11-12,13,14,sprint,200m,13-14,15,16,sprint,200m,15-16,17,18,sprint,200m,17-18
+running,1000,min,0,8,middle,800m,0-8,9,10,middle,800m,9-10,11,12,middle,800m,11-12,13,14,middle,800m,13-14,15,16,middle,800m,15-16,17,18,middle,800m,17-18
+running,1000,min,0,8,middle,1500m,0-8,9,10,middle,1500m,9-10,11,12,middle,1500m,11-12,13,14,middle,1500m,13-14,15,16,middle,1500m,15-16,17,18,middle,1500m,17-18
+running,1000,min,0,8,long,3000m,0-8,9,10,long,3000m,9-10,11,12,long,3000m,11-12,13,14,long,3000m,13-14,15,16,long,3000m,15-16,17,18,long,3000m,17-18
+running,1000,s,0,8,hurdles,60m,0-8,9,10,hurdles,60m,9-10,11,12,hurdles,60m,11-12,13,14,hurdles,60m,13-14,15,16,hurdles,60m,15-16,17,18,hurdles,60m,17-18
+jumping,1000,m,0,8,long,,0-8,9,10,long,,9-10,11,12,long,,11-12,13,14,long,,13-14,15,16,long,,15-16,17,18,long,,17-18
+jumping,1000,m,0,8,triple,,0-8,9,10,triple,,9-10,11,12,triple,,11-12,13,14,triple,,13-14,15,16,triple,,15-16,17,18,triple,,17-18
+jumping,1000,m,0,8,high,,0-8,9,10,high,,9-10,11,12,high,,11-12,13,14,high,,13-14,15,16,high,,15-16,17,18,high,,17-18
+jumping,1000,m,0,8,pole,,0-8,9,10,pole,,9-10,11,12,pole,,11-12,13,14,pole,,13-14,15,16,pole,,15-16,17,18,pole,,17-18
+throwing,1000,m,0,8,shot,,0-8,9,10,shot,,9-10,11,12,shot,,11-12,13,14,shot,,13-14,15,16,shot,,15-16,17,18,shot,,17-18

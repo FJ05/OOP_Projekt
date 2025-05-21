@@ -40,6 +40,7 @@ public:
     std::vector<Competitor> competitorArr{};
     std::vector<Division> divisionArr{};
     std::string unit{};
+    int arenaSize{};
 };
 
 #endif
