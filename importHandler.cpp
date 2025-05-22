@@ -76,97 +76,126 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
             ss.ignore(1);
             ss >> d.ageTo;
             ss.ignore(1);
-            getline(ss, d.desc, ',');
             getline(ss, d.name, ',');
+            getline(ss, d.desc, ',');
+            getline(ss, d.optDesc, ',');
+
+            cout << "This is ageTo" << d.ageTo << endl;
+            cout << "This is name and desc and optdesc" << d.name << d.desc << d.optDesc << endl;
 
             // add division in current sport
             sportPtr->divisionArr.push_back(d);
 
-            // record eventName = "desc name"
+            //checks so that there are no doubles of divisions, only one "60m sprint"
             string ev = d.desc + " " + d.name;
-            
             if (seenEvents.insert(ev).second) 
             {
+                cout << "Denna kom in " << ev << endl;
                 eventNames.push_back(ev);
             }
-
-            if (ss.peek() == EOF) 
-            {
-                break;
-            }
+            
         }
     }
     dbSportFile.close();
 
-    // --- 2) Build a mapping vector so index i in compIndex → Sport* + Division* ---
-    struct ColMap { Sport* sport; Division* div; };
-    vector<ColMap> colMaps;
-    colMaps.reserve(eventNames.size());
+    cout << "This is the end of while" << endl;
 
-    for (auto& ev : eventNames) {
-        // split into desc + name
-        auto pos = ev.find(' ');
-        string desc = (pos==string::npos ? ev : ev.substr(0,pos));
-        string name = (pos==string::npos ? "" : ev.substr(pos+1));
+    struct SpDvGroup { Sport* sport; Division* div; };
+    vector<SpDvGroup> spDvGroups;
+    spDvGroups.reserve(eventNames.size());
 
-        Sport*  sp  = nullptr;
+    for (int i = 0; i < eventNames.size(); i++)
+    {
+        string& ev = eventNames[i];
+
+        // splittar desc and name
+        int pos = ev.find(' ');
+        string desc = ev.substr(0,pos);
+        string name = ev.substr(pos+1);
+
+        //hittar sporten och divisionen
+        Sport* sp  = nullptr;
         Division* dv = nullptr;
-        for (auto& s : *sports) {
-            for (auto& d : s.divisionArr) {
+        for (int i = 0; i < sports->size();i++) 
+        {
+            Sport& s = (*sports)[i];
+            for (int j = 0; j < s.divisionArr.size(); j++) {
+                Division& d = s.divisionArr[j];
                 if (d.desc == desc && d.name == name) {
                     sp = &s;
                     dv = &d;
                     break;
                 }
             }
-            if (sp) break;
+            if (sp)
+            {
+                break;
+            }
         }
-        colMaps.push_back({sp,dv});
+        spDvGroups.push_back({sp,dv});
     }
 
     ifstream dbFile("DB/compIndex.csv");
-    if (!dbFile.is_open()) {
+    if (!dbFile.is_open()) 
+    {
         cerr << "Failed to open DB/compIndex.csv\n";
         return;
     }
 
     string line;
-    while (getline(dbFile, line)) {
+    while (getline(dbFile, line)) 
+    {
         stringstream ss(line);
-        vector<string> fields;
-        string fld;
-        while (getline(ss, fld, ',')) {
-            fields.push_back(fld);
+        vector<string> substr;
+        string temp;
+        while (getline(ss, temp, ',')) 
+        {
+            substr.push_back(temp);
         }
-        // need at least 5 base fields + event columns
-        if (fields.size() < 5) continue;
 
-        // build competitor
+        //ändra till emplace back sen
         Competitor c;
-        c.name = fields[0];
-        c.surname = fields[1];
-        c.age = stoi(fields[2]);
-        c.sex = fields[3].empty() ? 'U' : fields[3][0];
-        c.club = fields[4];
+        c.name = substr[0];
+        c.surname = substr[1];
+        c.age = stoi(substr[2]);
+        c.sex = substr[3][0];
+        c.club = substr[4];
 
-        // for each event column
-        for (size_t i = 5; i < fields.size() && i-5 < colMaps.size(); ++i) {
-            if (fields[i].empty()) continue;  // no score
+        // för varje score competitor kan ha
+        for (int i = 5; i < substr.size() && i-5 < spDvGroups.size(); i++) 
+        {
+            //om competitor inte har scoret
+            if (substr[i].empty())
+            {
+                continue; 
+            }
 
-            Sport*     sp = colMaps[i-5].sport;
-            Division*  dv = colMaps[i-5].div;
-            if (!sp || !dv) continue;        // unknown mapping
+            Sport* sp = spDvGroups[i-5].sport;
+            Division* dv = spDvGroups[i-5].div;
 
+            //om en är nullptr
+            if (!sp || !dv) 
+            {
+                continue;
+            }
+            //ändra till emplace back sen istället bättre
             Score sc;
-            sc.scoreStr = fields[i];
-            sc.sport    = sp;
-            sc.division = *dv;
+            sc.scoreStr = substr[i];
+            sc.sport = sp;
+            sc.division = *dv; //ändra till pointer sen
 
-            // attach score to competitor and sport
+            //sparar värderna i klassobjecten
             c.scoreArr.push_back(sc);
             scores->push_back(sc);
+            //ändra sen till en pointer och inte hela c
             sp->competitorArr.push_back(c);
         }
+
+        //FIXA DETTA!!!!
+
+        // assets använder ibland pointers och ibland inte
+        //fixa så de alltid använder pointers
+        //ksk fixar buggen med för många competitors i sport array saken
 
         competitors->push_back(c);
     }
