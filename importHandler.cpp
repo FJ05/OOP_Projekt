@@ -76,50 +76,61 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
             ss.ignore(1);
             ss >> d.ageTo;
             ss.ignore(1);
-            getline(ss, d.desc, ',');
             getline(ss, d.name, ',');
+            getline(ss, d.desc, ',');
+            getline(ss, d.optDesc, ',');
+
+            cout << "This is ageTo" << d.ageTo << endl;
+            cout << "This is name and desc and optdesc" << d.name << d.desc << d.optDesc << endl;
 
             // add division in current sport
             sportPtr->divisionArr.push_back(d);
 
-            // record eventName = "desc name"
+            //checks so that there are no doubles of divisions, only one "60m sprint"
             string ev = d.desc + " " + d.name;
-            
             if (seenEvents.insert(ev).second) 
             {
+                cout << "Denna kom in " << ev << endl;
                 eventNames.push_back(ev);
             }
-
-            if (ss.peek() == EOF) 
-            {
-                break;
-            }
+            
         }
     }
     dbSportFile.close();
 
-    // --- 2) Build a mapping vector so index i in compIndex → Sport* + Division* ---
+    cout << "This is the end of while" << endl;
+
     struct ColMap { Sport* sport; Division* div; };
     vector<ColMap> colMaps;
     colMaps.reserve(eventNames.size());
 
-    for (auto& ev : eventNames) {
-        // split into desc + name
-        auto pos = ev.find(' ');
-        string desc = (pos==string::npos ? ev : ev.substr(0,pos));
-        string name = (pos==string::npos ? "" : ev.substr(pos+1));
+    for (int i = 0; i < eventNames.size(); i++)
+    {
+        string& ev = eventNames[i];
 
-        Sport*  sp  = nullptr;
+        // split desc and name
+        int pos = ev.find(' ');
+        string desc = ev.substr(0,pos);
+        string name = ev.substr(pos+1);
+
+        //hittar sporten och divisionen
+        Sport* sp  = nullptr;
         Division* dv = nullptr;
-        for (auto& s : *sports) {
-            for (auto& d : s.divisionArr) {
+        for (int i = 0; i < sports->size();i++) 
+        {
+            Sport& s = (*sports)[i];
+            for (int j = 0; j < s.divisionArr.size(); j++) {
+                Division& d = s.divisionArr[j];
                 if (d.desc == desc && d.name == name) {
                     sp = &s;
                     dv = &d;
                     break;
                 }
             }
-            if (sp) break;
+            if (sp)
+            {
+                break;
+            }
         }
         colMaps.push_back({sp,dv});
     }

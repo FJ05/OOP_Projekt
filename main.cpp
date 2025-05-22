@@ -28,6 +28,7 @@ int main()
     }
 
 
+
  
     // Efter import av data
     ScheduleCalculator scheduler;
