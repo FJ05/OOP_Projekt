@@ -1,59 +1,39 @@
-#include <fstream> 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include "assets.h"
 #include "importHandler.h"
 #include "schedulecalculator.h"
 
-using namespace std;
-
-int main()
-{
-    vector<Competitor> competitors;
-    vector<Score> scores;
-    vector<Sport> sports;
+int main() {
+    std::vector<Competitor> competitors;
+    std::vector<Score> scores;
+    std::vector<Sport> sports;
 
     ImportSystem importer;
     importer.ImportValues(&competitors, &scores, &sports);
 
-    // Test: skriv ut resultat
-    cout << "Antal tävlande: " << competitors.size() << endl;
-    for (const auto& sport : sports) {
-        cout << "Sport: " << sport.name << " (" << sport.unit << "), Arena size: " << sport.arenaSize << endl;
-        cout << "  Antal tävlande: " << sport.competitorArr.size() << endl;
-        cout << "  Divisioner:" << endl;
-        for (const auto& d : sport.divisionArr) {
-            cout << "    - " << d.name << " (" << d.desc << "), Optional: " << d.optDesc << endl;
-        }
-    }
-
-
- 
-    // Efter import av data
     ScheduleCalculator scheduler;
     auto schedule = scheduler.GenerateSchedule(sports);
 
-    // Skriv ut schemat
     std::ofstream scheduleFile("schedule.csv");
-    scheduleFile << "Station;Start;Slut;Gren;Division;Deltagare\n";
-    for (const auto& event : schedule) {
+    scheduleFile << "Station;Dicipline;M/F;Age;Total time;Time;Deltagare\n";
+    
+    for(const auto& event : schedule) {
         scheduleFile << event.station << ";"
-                    << event.startTime << ";"
-                    << event.endTime << ";"
-                    << event.sport.name << ";"
-                    << event.division.desc << " "
-                    << event.division.name << ";";
+                    << event.discipline << ";"
+                    << event.gender << ";"
+                    << event.ageGroup << ";"
+                    << event.totalTime << ";"
+                    << event.timeSlot << ";";
         
-        for (size_t i = 0; i < event.competitors.size(); ++i) {
-            if (i > 0) scheduleFile << ",";
+        for(size_t i = 0; i < event.competitors.size(); ++i) {
+            if(i > 0) scheduleFile << ",";
             scheduleFile << event.competitors[i].name << " "
                         << event.competitors[i].surname;
         }
         scheduleFile << "\n";
     }
-    scheduleFile.close();
-
-
-
+    
     return 0;
 }

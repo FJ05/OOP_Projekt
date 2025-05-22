@@ -1,16 +1,17 @@
 #ifndef SCHEDULECALCULATOR_H
 #define SCHEDULECALCULATOR_H
 
+#include "assets.h"
 #include <vector>
 #include <string>
-#include "assets.h"
 
 struct ScheduledEvent {
     std::string station;
-    std::string startTime;
-    std::string endTime;
-    Sport sport;
-    Division division;
+    std::string discipline;
+    char gender;
+    std::string ageGroup;
+    int totalTime;
+    std::string timeSlot;
     std::vector<Competitor> competitors;
 };
 
@@ -20,9 +21,8 @@ public:
     
 private:
     std::string AddTime(const std::string& currentTime, int minutes) const;
-    int CompareTime(const std::string& t1, const std::string& t2) const;
-    std::vector<std::string> GetStationsForEvent(const std::string& sportType, const Division& division) const;
+    bool IsTimeAfterOrEqual(const std::string& time1, const std::string& time2) const;
     int CalculateDuration(const Sport& sport, const Division& division, int numCompetitors) const;
+    std::vector<std::string> GetStationsForEvent(const std::string& sportType, const Division& division) const;
 };
-
 #endif
