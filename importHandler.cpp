@@ -139,50 +139,68 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
         c.club = substr[4];
 
         cout << c.name << endl;
+
         //loopar för varje score competitor har
         for (int i = 5; i < substr.size(); i++)
         {
-            int currentSportNumber = i-5;
-            cout << "sportnr " << currentSportNumber << endl;
-            cout << "age " << c.age << endl;
-
-            //int age, int specificSportNumber, sport &s
-            //return *division
-
-            //finding the specific sport division
-            //gör till en funktion
-            Sport *s;
-
-            if(currentSportNumber <= 3) //18/6
-            {
-                //finds the subSport
-                int specificSport = currentSportNumber;
-                Sport *s = &(*sports)[0];
-                Division *d = findDivision(c.age, specificSport, s);
-
-                //kolla igenom *6
-                //mellan (currentSportNumber-5)*6 och (currentSportNumber-5)*6+5
-                //Division &d = s.divisionArr(currentSportNumber-5);
-                cout << "The sport is running s and specific " << specificSport << endl;
-            }
-            else if(currentSportNumber <= 6) //(18+18)/6
-            {
-                cout << "The sport is running min" << endl;
-            }
-            else if(currentSportNumber <= 10) //(18+18+24)/6
-            {
-                cout << "The sport is jumping " << endl;
-            }
-            else
-            {
-                cout << "The sport is throwing " << endl;
-            }
-            cout << substr[i] << endl; 
-            //skippa om competitor inte har score i denna sport
+            //om den inte har scoret bara skippa
             if(substr[i].empty())
             {
                 continue;
             }
+            //current sport stands for the current subsport, like 0 is sprint 60m, 1 is sprint 200m
+            int currentSportNumber = i-5;
+            cout << "sportnr " << currentSportNumber << endl;
+            cout << "age " << c.age << endl;
+            cout << "The score: " << substr[i] << endl;
+
+
+
+            Sport *s;
+            Division *d;
+            //finds subSport
+            if(currentSportNumber <= 2) //18/6 because there are 3 subsports with 6 age divisions, 6*3=18 
+            {
+                int specificSport = currentSportNumber;
+                //the sport pointer for the big sport (running(s), running(min), jumping, throwing)
+                Sport *s = &(*sports)[0];
+
+                cout << "Specific sport number " << specificSport << endl;
+                cout << "sport running s, 0" << endl;
+                //finds specific age group division for the subsport
+                d = findDivision(c.age, specificSport, s);
+                //cout << "The sport is running s and specific " << specificSport << endl;
+            }
+            else if(currentSportNumber <= 5) //(18+18)/6 = 6,   6-1 = 5
+            {
+                int specificSport = currentSportNumber - 3;
+                //the sport pointer for the big sport (running(s), running(min), jumping, throwing)
+                Sport *s = &(*sports)[1];
+                //finds specific age group division for the subsport
+                d = findDivision(c.age, specificSport, s);
+                cout << "The sport is running min" << endl;
+            }
+            else if(currentSportNumber <= 9) //(18+18+24)/6 = 10,  10-1=9
+            {
+                int specificSport = currentSportNumber - 6;
+                Sport *s = &(*sports)[2];
+                d = findDivision(c.age, specificSport, s);
+                cout << "The sport is jumping " << endl;
+            }
+            else //throwing scoret är else
+            {
+                int specificSport = currentSportNumber - 10;
+                Sport *s = &(*sports)[3];
+                d = findDivision(c.age, specificSport, s);
+                cout << "The sport is throwing " << endl;
+            }
+            cout << "info bout division:" << endl;
+            cout << "ageFrom:" << d->ageFrom<< endl;
+            cout << "ageTo:" << d->ageTo<< endl;
+            cout << "name:" << d->name<< endl;
+            cout << "desc:" << d->desc<< endl;
+            cout << "optdesc:" << d->optDesc<< endl;
+            cout << "gender:" << d->gender<< endl;
             //ändra till emplace
             Score sc;
             sc.scoreStr = substr[i];
@@ -193,7 +211,7 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
             //if age >= ageFrom och age <= ageTo
             // add division to score
             c.scoreArr.push_back(sc);
-
+            cout << endl;
         }  
         
         /*
