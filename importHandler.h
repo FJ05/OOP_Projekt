@@ -6,9 +6,10 @@
 
 class ImportSystem {
 public:
-    void ImportValues(std::vector<Competitor>* competitors,
-                      std::vector<Score>* scores,
-                      std::vector<Sport>* sports);
+    void ImportValues(std::vector<Competitor>* competitors, std::vector<Score>* scores, std::vector<Sport>* sports);
+    
+    Division* findDivision(int age, int specificSport, Sport *s);
+
 };
 
 #endif

@@ -6,6 +6,23 @@
 #include "importHandler.h"
 using namespace std;
 
+    
+Division* ImportSystem::findDivision(int age, int specificSport, Sport *s)
+{
+    cout << "Find specific division :Between number " << specificSport*6 << " and " << specificSport*6+5<< endl;
+    //om age är rätt
+    for(int j = 0; j < 6; j++)
+    {
+        if(s->divisionArr[specificSport*6+j].ageFrom <= age && s->divisionArr[specificSport*6+j].ageTo >= age)
+        {
+            cout << "FOUND IT: The answer is " << specificSport*6+j << endl;
+            return &s->divisionArr[specificSport*6+j];
+        }
+    }
+    //probably unecessary
+    return nullptr;
+}
+
 void ImportSystem::ImportValues(vector<Competitor>* competitors,
                                 vector<Score>* scores,
                                 vector<Sport>* sports)
@@ -125,31 +142,23 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
         //loopar för varje score competitor har
         for (int i = 5; i < substr.size(); i++)
         {
-            int currentSportNumber = i-4;
+            int currentSportNumber = i-5;
             cout << "sportnr " << currentSportNumber << endl;
             cout << "age " << c.age << endl;
 
-            //halleo
+            //int age, int specificSportNumber, sport &s
+            //return *division
+
             //finding the specific sport division
             //gör till en funktion
+            Sport *s;
+
             if(currentSportNumber <= 3) //18/6
             {
                 //finds the subSport
-                int specificSport = currentSportNumber - 1;
-                cout << "Find specific division :Between number " << specificSport*6 << " and " << specificSport*6+5<< endl;
-                Sport &s = (*sports)[0];
-                //om age är rätt 
-                for(int j = 0; j < 6; j++)
-                {
-                    if(s.divisionArr[specificSport*6+j].ageFrom <= c.age && s.divisionArr[specificSport*6+j].ageTo >= c.age)
-                    {
-                        //save in a pointer
-                        //Division *d = 
-                        cout << "The answer is " << specificSport*6+j << endl;
-                        break;
-                    }
-                }
-
+                int specificSport = currentSportNumber;
+                Sport *s = &(*sports)[0];
+                Division *d = findDivision(c.age, specificSport, s);
 
                 //kolla igenom *6
                 //mellan (currentSportNumber-5)*6 och (currentSportNumber-5)*6+5
