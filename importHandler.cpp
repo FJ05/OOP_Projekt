@@ -129,6 +129,7 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
             cout << "sportnr " << currentSportNumber << endl;
             cout << "age " << c.age << endl;
 
+            //halleo
             //finding the specific sport division
             //gör till en funktion
             if(currentSportNumber <= 3) //18/6
