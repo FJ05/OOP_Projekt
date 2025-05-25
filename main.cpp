@@ -3,25 +3,25 @@
 #include <vector>
 #include "assets.h"
 #include "importHandler.h"
-#include "schedulecalculator.h"
-
+//#include "schedulecalculator.h"
+using namespace std;
 int main() {
-    std::vector<Competitor> competitors;
-    std::vector<Score> scores;
-    std::vector<Sport> sports;
+    vector<Competitor> competitors;
+    vector<Score> scores;
+    vector<Sport> sports;
 
     ImportSystem importer;
     importer.ImportValues(&competitors, &scores, &sports);
 
-<<<<<<< HEAD
-=======
     // Test: skriv ut resultat
     cout << "Antal tävlande: " << competitors.size() << endl;
+    cout << "Antal sporter: " << sports.size() << endl;
     for (int i = 0; i < sports.size(); i++) {
         const Sport& sport = sports[i];
 
         cout << "Sport: " << sport.name << " ( unit: " << sport.unit << " ), Arena size: " << sport.arenaSize << endl;
         cout << "  Antal tävlande: " << sport.competitorArr.size() << endl;
+        cout << "Antal divisioner " << sports[i].divisionArr.size() << endl;
         cout << "  Divisioner:" << endl;
 
         for (int j = 0; j < sport.divisionArr.size(); j++) {
@@ -32,9 +32,8 @@ int main() {
 
 
 
-
+/*
     // Efter import av data
->>>>>>> afdf405dfc78d53ff40a978e4b5812ac7bdb295d
     ScheduleCalculator scheduler;
     auto schedule = scheduler.GenerateSchedule(sports);
 
@@ -56,6 +55,6 @@ int main() {
         }
         scheduleFile << "\n";
     }
-    
+    */
     return 0;
 }
