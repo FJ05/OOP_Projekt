@@ -7,6 +7,13 @@
 using namespace std;
 
 //används för att hitta rätt id (om id är mellan 0 och 11 så adderar man funktionens return för att få rätt id)
+/**
+ * @brief 
+ * 
+ * @param c 
+ * @param s 
+ * @return int 
+ */
 int ImportSystem::findDivision(Competitor *c, Sport *s)
 {
     for(int j = 0; j < 12; j++)
@@ -19,6 +26,13 @@ int ImportSystem::findDivision(Competitor *c, Sport *s)
     }
 }
 
+/**
+ * @brief 
+ * 
+ * @param competitors 
+ * @param scores 
+ * @param sports 
+ */
 void ImportSystem::ImportValues(vector<Competitor>* competitors, vector<Score>* scores, vector<Sport>* sports)
 {
     ifstream dbSportFile("DB/sportIndex.csv");

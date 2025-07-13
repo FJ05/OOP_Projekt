@@ -6,6 +6,12 @@
 
 using namespace std;
 
+/**
+ * @brief 
+ * 
+ * @param sports 
+ * @return vector<ScheduledEvent> 
+ */
 vector<ScheduledEvent> ScheduleCalculator::GenerateSchedule(const vector<Sport>& sports) {
     vector<ScheduledEvent> schedule;
     map<string, string> stationMap = {
@@ -70,6 +76,13 @@ vector<ScheduledEvent> ScheduleCalculator::GenerateSchedule(const vector<Sport>&
     return schedule;
 }
 
+/**
+ * @brief 
+ * 
+ * @param currentTime 
+ * @param minutes 
+ * @return string 
+ */
 string ScheduleCalculator::AddTime(const string& currentTime, int minutes) const {
     // Validera tidsformat
     if(currentTime.length() != 5 || 
@@ -94,6 +107,14 @@ string ScheduleCalculator::AddTime(const string& currentTime, int minutes) const
     return string(buffer);
 }
 
+/**
+ * @brief 
+ * 
+ * @param time1 
+ * @param time2 
+ * @return true 
+ * @return false 
+ */
 bool ScheduleCalculator::IsTimeAfterOrEqual(const string& time1, const string& time2) const {
     int h1 = stoi(time1.substr(0, 2));
     int m1 = stoi(time1.substr(3, 2));
@@ -102,7 +123,14 @@ bool ScheduleCalculator::IsTimeAfterOrEqual(const string& time1, const string& t
     
     return (h1 > h2) || (h1 == h2 && m1 >= m2);
 }
-
+/**
+ * @brief 
+ * 
+ * @param sport 
+ * @param division 
+ * @param numCompetitors 
+ * @return int 
+ */
 int ScheduleCalculator::CalculateDuration(const Sport& sport, const Division& division, int numCompetitors) const {
     if(numCompetitors <= 0) return 0;
     
@@ -115,6 +143,13 @@ int ScheduleCalculator::CalculateDuration(const Sport& sport, const Division& di
     return 15; // fallback
 }
 
+/**
+ * @brief 
+ * 
+ * @param sportType 
+ * @param division 
+ * @return vector<string> 
+ */
 vector<string> ScheduleCalculator::GetStationsForEvent(
     const string& sportType, 
     const Division& division) const 

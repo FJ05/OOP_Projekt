@@ -5,6 +5,11 @@
 #include "importHandler.h"
 #include "schedulecalculator.h"
 using namespace std;
+/**
+ * @brief 
+ * 
+ * @return int 
+ */
 int main() {
     vector<Competitor> competitors;
     vector<Score> scores;

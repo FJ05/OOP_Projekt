@@ -3,6 +3,11 @@
 #include <cctype>
 using namespace std;
 
+/**
+ * @brief Create a Sport object
+ * 
+ * @return int 
+ */
 int CreateSport(){
     string name;
     int arenaSize;
@@ -34,6 +39,11 @@ int CreateSport(){
     }
 }
 
+/**
+ * @brief Create a Division object
+ * 
+ * @return int 
+ */
 int CreateDivision(){
     char boolian;
     int ageFrom;
@@ -69,6 +79,11 @@ int CreateDivision(){
     return 0;
 }
 
+/**
+ * @brief Create a Competitior object
+ * 
+ * @return int 
+ */
 int CreateCompetitior(){
     string name;
     string surname;

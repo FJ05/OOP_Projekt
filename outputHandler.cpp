@@ -11,6 +11,10 @@ This file is used for exporting competitors to the compIndex.csv
 #include "assets.h"
 using namespace std;
 
+/**
+ * @brief 
+ * 
+ */
 class OutputSystem 
 {
 public:
