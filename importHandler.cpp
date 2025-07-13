@@ -2,16 +2,25 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <set>
+#include <tuple>
 #include "importHandler.h"
 using namespace std;
 
-void ImportSystem::ImportValues(vector<Competitor>* competitors,
-                                vector<Score>* scores,
-                                vector<Sport>* sports)
+//används för att hitta rätt id (om id är mellan 0 och 11 så adderar man funktionens return för att få rätt id)
+int ImportSystem::findDivision(Competitor *c, Sport *s)
 {
-    cout << "start importvalues" << endl;
+    for(int j = 0; j < 12; j++)
+    {
+        //om det är rätt ålder och rätt kön betyder det att det är rätt division, och returnar j
+        if(s->divisionArr[j].ageFrom <= c->age && s->divisionArr[j].ageTo >= c->age && s->divisionArr[j].gender == c->sex)
+        {
+            return j;
+        }
+    }
+}
 
+void ImportSystem::ImportValues(vector<Competitor>* competitors, vector<Score>* scores, vector<Sport>* sports)
+{
     ifstream dbSportFile("DB/sportIndex.csv");
     
     if (!dbSportFile.is_open()) {
@@ -19,10 +28,9 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
         return;
     }
 
-    vector<string> eventNames;
-    set<string> seenEvents;
     string lineSport;
 
+    //int divId = 0;
     while (getline(dbSportFile, lineSport)) 
     {
         stringstream ss(lineSport);
@@ -31,6 +39,13 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
         string unit;
         
         string temp;
+
+        //måste läsa in detta först för att kunna få ut desc1
+        string dAgeFrom1;
+        string dAgeTo1;
+        string dName1;
+        string dDesc1;
+        string dOptDesc1;
 
         //sparar sportNamn, arenaSize och unit i variabler
         getline(ss, sportName, ','); 
@@ -41,13 +56,12 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
         
         Sport* sportPtr = nullptr;
         
-        //kollar igenom om det redan finns en sport med det namnet
+        //kollar igenom om sporten redan är skapad (med sport menar vi running(s), running(min), jumping och throwing)
         //om den finns får sportPtr pointer värdet av den existerande sporten
-        
-        // PROBLEM: kan finnas flera objekt med samma sport och unit, ksk fixa sportNamnet och desc innan o jämföra
         for (int i = 0; i < sports->size(); i++)
         {
             Sport &s = (*sports)[i];
+            //ändra till sportName
             if (s.name == sportName && s.unit == unit) 
             {
                 sportPtr = &s;
@@ -55,7 +69,7 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
             }
         }
 
-        //om sportPtr är tom ska vi skapa sporten
+        //om sporten inte fanns så skapar vi den
         if (!sportPtr) 
         {
             sports->emplace_back();
@@ -65,7 +79,7 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
             sportPtr->unit = unit;
         }
 
-        // split up all values into different divisions
+        //split up all values into different divisions
         while (true) {
             Division d;
             //if there is no more values
@@ -79,68 +93,58 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
             getline(ss, d.name, ',');
             getline(ss, d.desc, ',');
             getline(ss, d.optDesc, ',');
-
-            cout << "This is ageTo" << d.ageTo << endl;
-            cout << "This is name and desc and optdesc" << d.name << d.desc << d.optDesc << endl;
-
-            // add division in current sport
+            d.gender = 'M';
             sportPtr->divisionArr.push_back(d);
-
-            //checks so that there are no doubles of divisions, only one "60m sprint"
-            string ev = d.desc + " " + d.name;
-            if (seenEvents.insert(ev).second) 
-            {
-                cout << "Denna kom in " << ev << endl;
-                eventNames.push_back(ev);
-            }
-            
+            //lägger till en female division också
+            d.gender = 'F';
+            sportPtr->divisionArr.push_back(d);
         }
     }
-    dbSportFile.close();
+    dbSportFile.close();    
 
-    cout << "This is the end of while" << endl;
-
-    struct SpDvGroup { Sport* sport; Division* div; };
-    vector<SpDvGroup> spDvGroups;
-    spDvGroups.reserve(eventNames.size());
-
-    for (int i = 0; i < eventNames.size(); i++)
+    /*
+    for(int i = 0; i < sports->size(); i++)
     {
-        string& ev = eventNames[i];
-
-        // splittar desc and name
-        int pos = ev.find(' ');
-        string desc = ev.substr(0,pos);
-        string name = ev.substr(pos+1);
-
-        //hittar sporten och divisionen
-        Sport* sp  = nullptr;
-        Division* dv = nullptr;
-        for (int i = 0; i < sports->size();i++) 
+        Sport &s = (*sports)[i];
+        cout << "Sport namn: " << s.name << " unit: " << s.unit << endl;
+        for(int j = 0; j < s.divisionArr.size(); j++)
         {
-            Sport& s = (*sports)[i];
-            for (int j = 0; j < s.divisionArr.size(); j++) {
-                Division& d = s.divisionArr[j];
-                if (d.desc == desc && d.name == name) {
-                    sp = &s;
-                    dv = &d;
-                    break;
-                }
-            }
-            if (sp)
-            {
-                break;
-            }
+            Division &d = s.divisionArr[j];
+                cout << "info bout division:" << endl;
+                //cout << "ID:" << d.id << endl;
+                cout << "ageFrom:" << d.ageFrom<< endl;
+                cout << "ageTo:" << d.ageTo<< endl;
+                cout << "name:" << d.name<< endl;
+                cout << "desc:" << d.desc<< endl;
+                cout << "optdesc:" << d.optDesc<< endl;
+                cout << "gender:" << d.gender<< endl << endl; 
         }
-        spDvGroups.push_back({sp,dv});
+        cout << endl << endl << endl;
     }
-
+    */
+    
+    
     ifstream dbFile("DB/compIndex.csv");
-    if (!dbFile.is_open()) 
+    if (!dbFile.is_open())
     {
         cerr << "Failed to open DB/compIndex.csv\n";
         return;
     }
+
+    //innehåller startId and sportIndex som används för att hitta rätt division senare
+    vector<pair<int, int>> searchValues = {
+        {0, 0},
+        {12, 0},
+        {0, 1},
+        {12, 1},
+        {24, 1},
+        {36, 1},
+        {24, 0},
+        {0, 2},
+        {12, 2},
+        {24, 2},
+        {0, 3}
+    };
 
     string line;
     while (getline(dbFile, line)) 
@@ -153,7 +157,7 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
             substr.push_back(temp);
         }
 
-        //ändra till emplace back sen
+        //lägger till de fasta och simpla värderna i competitor
         Competitor c;
         c.name = substr[0];
         c.surname = substr[1];
@@ -161,48 +165,58 @@ void ImportSystem::ImportValues(vector<Competitor>* competitors,
         c.sex = substr[3][0];
         c.club = substr[4];
 
-        // för varje score competitor kan ha
-        for (int i = 5; i < substr.size() && i-5 < spDvGroups.size(); i++) 
+        int ageGenderDivDiff = findDivision(&c,&(*sports)[0]);
+
+        //loopar alla scores competitor har
+        for (int i = 5; i < substr.size(); i++)
         {
-            //om competitor inte har scoret
-            if (substr[i].empty())
-            {
-                continue; 
-            }
-
-            Sport* sp = spDvGroups[i-5].sport;
-            Division* dv = spDvGroups[i-5].div;
-
-            //om en är nullptr
-            if (!sp || !dv) 
+            //om den inte har scoret bara skippa
+            if(substr[i].empty())
             {
                 continue;
             }
-            //ändra till emplace back sen istället bättre
-            Score sc;
-            sc.scoreStr = substr[i];
-            sc.sport = sp;
-            sc.division = *dv; //ändra till pointer sen
+            
+            //current sport står för den nuvariga delsporten, like 0 är sprint 60m, 1 är sprint 200m
+            int currentSportNumber = i-5;
+            
+            //cout << "sportnr " << currentSportNumber << endl;
+            //cout << "age " << c.age << endl;
+            //cout << "The score: " << substr[i] << endl;
 
-            //sparar värderna i klassobjecten
-            c.scoreArr.push_back(sc);
-            scores->push_back(sc);
-            //ändra sen till en pointer och inte hela c
-            sp->competitorArr.push_back(c);
+            int from = std::get<0>(searchValues[currentSportNumber]);
+            int sportId = std::get<1>(searchValues[currentSportNumber]);
+            
+            //sportId används för att hitta rätt Id
+            Sport &s = (*sports)[sportId];
+            //from+ageGenderDivDiff ger rätt id för division 
+            //(vi vet att id är mellan t.ex mellan 12 och 23, då tar man 12 och adderar skillnaden (svårt att förklara))    
+            Division *d = &s.divisionArr[from+ageGenderDivDiff];
+            
+            /*
+            error fixing cout
+            if(d != nullptr)
+            {
+            cout << "info bout division:" << endl;
+            cout << "ageFrom:" << d->ageFrom<< endl;
+            cout << "ageTo:" << d->ageTo<< endl;
+            cout << "name:" << d->name<< endl;
+            cout << "desc:" << d->desc<< endl;
+            cout << "optdesc:" << d->optDesc<< endl;
+            cout << "gender:" << d->gender<< endl;
+            }
+            */
+            
+            //lägger till score i competitor
+            c.scoreArr.emplace_back();
+            Score *scorePtr = &c.scoreArr.back();
+            scorePtr->scoreStr = substr[i];
+            scorePtr->division = *d;
+            scorePtr->sport = &s;
+
+            s.competitorArr.push_back(c);
+            //cout << endl;
         }
-
-        //FIXA DETTA!!!!
-
-        // assets använder ibland pointers och ibland inte
-        //fixa så de alltid använder pointers
-        //ksk fixar buggen med för många competitors i sport array saken
-
-        competitors->push_back(c);
+        competitors->push_back(c);        
     }
-
     dbFile.close();
-    cout << "importvalues done: "
-         << competitors->size() << " competitors, "
-         << scores->size()      << " scores, "
-         << sports->size()      << " sports\n";
 }

@@ -4,27 +4,30 @@
 #include "assets.h"
 #include "importHandler.h"
 #include "schedulecalculator.h"
-
+using namespace std;
 int main() {
-    std::vector<Competitor> competitors;
-    std::vector<Score> scores;
-    std::vector<Sport> sports;
+    vector<Competitor> competitors;
+    vector<Score> scores;
+    vector<Sport> sports;
 
     ImportSystem importer;
     importer.ImportValues(&competitors, &scores, &sports);
 
     // Test: skriv ut resultat
+    cout << "Starta print" << endl;
     cout << "Antal tävlande: " << competitors.size() << endl;
+    cout << "Antal sporter: " << sports.size() << endl;
     for (int i = 0; i < sports.size(); i++) {
         const Sport& sport = sports[i];
 
         cout << "Sport: " << sport.name << " ( unit: " << sport.unit << " ), Arena size: " << sport.arenaSize << endl;
         cout << "  Antal tävlande: " << sport.competitorArr.size() << endl;
+        cout << "Antal divisioner " << sports[i].divisionArr.size() << endl;
         cout << "  Divisioner:" << endl;
 
         for (int j = 0; j < sport.divisionArr.size(); j++) {
             const Division& d = sport.divisionArr[j];
-            cout << "    - " << d.name << " (" << d.desc << "), Optional: " << d.optDesc << endl;
+            cout << "    - " << d.name << " (" << d.desc << "), Optional: " << d.optDesc  << "Gender :" << d.gender << endl;
         }
     }
 
