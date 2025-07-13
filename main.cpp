@@ -13,8 +13,6 @@ int main() {
     ImportSystem importer;
     importer.ImportValues(&competitors, &scores, &sports);
 
-<<<<<<< HEAD
-=======
     // Test: skriv ut resultat
     cout << "Antal tävlande: " << competitors.size() << endl;
     for (int i = 0; i < sports.size(); i++) {
@@ -34,7 +32,6 @@ int main() {
 
 
     // Efter import av data
->>>>>>> afdf405dfc78d53ff40a978e4b5812ac7bdb295d
     ScheduleCalculator scheduler;
     auto schedule = scheduler.GenerateSchedule(sports);
 
